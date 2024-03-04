@@ -8,6 +8,7 @@ screen = pg.display.set_mode((1280,720))
 clock =pg.time.Clock()
 gameState = 'startscreen'
 selectedDifficulty = 'easy'
+score = 0
 
 #creating a class to create objects
 class CreateObject():
@@ -24,7 +25,7 @@ class CreateObject():
         screen.blit(surface.surface,surface.rect)
 
 #Creating the objects
-startGame, difficulty, easy, medium, hard, guessNumberText, guessText, returnToStartMenu, textSurface, winCheck = CreateObject(), CreateObject(), CreateObject(),CreateObject(),CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject()
+startGame, difficulty, easy, medium, hard, guessNumberText, guessText, returnToStartMenu, textSurface, winCheck, scoreSurface =CreateObject(), CreateObject(), CreateObject(), CreateObject(),CreateObject(),CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject()
 #setting the text for the objects
 startGame.text((370,300),"Start game","yellow",80)
 difficulty.text((870, 100), "Difficulty", "Blue", 60)
@@ -32,6 +33,11 @@ easy.text((870,200), 'easy','#5ced73',40)
 medium.text((870,300), 'medium','#e69b00',40)
 hard.text((870,400), 'hard','#5E1914',40)
 returnToStartMenu.text((1100, 650),"Return To Start Menu","Red",30)
+
+#initilizing the music
+pg.mixer.music.load('assets/backroundmusic.mp3')
+pg.mixer.music.play(-1)
+pg.mixer.music.set_volume(0.2)
 
 #game loop
 while True:
@@ -60,6 +66,7 @@ while True:
 
                 #check if the mouse is clicking on start game button
                 if startGame.rect.collidepoint(event.pos):
+                    playerWon = False
                     #set the number to guess and the amount of guesses based on the difficulty and change gamestate to start the game
                     if selectedDifficulty == 'easy':
                         numberToGuess = random.randint(0, 25)
@@ -97,22 +104,34 @@ while True:
                 elif event.key == pg.K_RETURN and userText != '':
                     if int(userText) == numberToGuess:
                         winCheck.text((640, 400), 'You Win!, Return to main menu to play again', 'Black', 70)
+                        if selectedDifficulty == 'easy':
+                            score += 1
+                        if selectedDifficulty == 'medium':
+                            score += 2
+                        if selectedDifficulty == 'hard':
+                            score += 3
+                        playerWon = True
                         playGame = False
                     if int(userText) > numberToGuess:
                         winCheck.text((640, 400), f'You guessed {userText}, My Number is Lower!', 'Black', 70)
                     if int(userText) < numberToGuess:
                         winCheck.text((640, 400), f'You guessed {userText}, My Number is Higher!', 'Black', 70)
                     userText = ''
+                    #check if the user has run out of guesses and has not won
                     guesses -= 1
-                    if guesses == 0:
+                    if guesses == 0 and playerWon is False:
                         winCheck.text((640, 400), f'You Lose! My Number was {numberToGuess}, Return to main menu to play again', 'Black', 50)
                         playGame = False
                 #check if the user is pressing a number key and add it to the userText
                 if event.type == pg.KEYDOWN and event.unicode.isdigit():
                     userText += event.unicode
+
+    #creating surface for score
+    scoreSurface.text((10, 10), f"Score: {score}", "Black", 50, rectpos = 'topleft')
     #drawing the start screen
     if gameState == 'startscreen':
         screen.fill('#554904')
+        scoreSurface.screenBlit(scoreSurface)
         startGame.screenBlit(startGame)
         difficulty.screenBlit(difficulty)
         easy.screenBlit(easy)
@@ -132,6 +151,7 @@ while True:
     #drawing the game screen
     if gameState == 'game':
         screen.fill('#fff5be')
+        scoreSurface.screenBlit(scoreSurface)
         guessText.text( (1100, 20), f"You Have {guesses} Guesses Left!", "black", 30)
         guessText.screenBlit(guessText)
         guessNumberText.screenBlit(guessNumberText)
