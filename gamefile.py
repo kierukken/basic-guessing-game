@@ -21,8 +21,8 @@ class CreateObject():
             self.rect = self.surface.get_rect(midtop = position)
 
     #function to blit the text to the screen
-    def screenBlit(self, surface):
-        screen.blit(surface.surface,surface.rect)
+    def screenBlit(self):
+        screen.blit(self.surface,self.rect)
 
 #Creating the objects
 startGame, difficulty, easy, medium, hard, guessNumberText, guessText, returnToStartMenu, textSurface, winCheck, scoreSurface =CreateObject(), CreateObject(), CreateObject(), CreateObject(),CreateObject(),CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject(), CreateObject()
@@ -131,12 +131,12 @@ while True:
     #drawing the start screen
     if gameState == 'startscreen':
         screen.fill('#554904')
-        scoreSurface.screenBlit(scoreSurface)
-        startGame.screenBlit(startGame)
-        difficulty.screenBlit(difficulty)
-        easy.screenBlit(easy)
-        medium.screenBlit(medium)
-        hard.screenBlit(hard)
+        scoreSurface.screenBlit()
+        startGame.screenBlit()
+        difficulty.screenBlit()
+        easy.screenBlit()
+        medium.screenBlit()
+        hard.screenBlit()
 
         #draw a rectangle around the selected difficulty
         if selectedDifficulty == 'easy':
@@ -151,15 +151,15 @@ while True:
     #drawing the game screen
     if gameState == 'game':
         screen.fill('#fff5be')
-        scoreSurface.screenBlit(scoreSurface)
+        scoreSurface.screenBlit()
         guessText.text( (1100, 20), f"You Have {guesses} Guesses Left!", "black", 30)
-        guessText.screenBlit(guessText)
-        guessNumberText.screenBlit(guessNumberText)
-        returnToStartMenu.screenBlit(returnToStartMenu)
+        guessText.screenBlit()
+        guessNumberText.screenBlit()
+        returnToStartMenu.screenBlit()
         #draw the users guess and check for win or loss
         if hasattr(winCheck, 'surface'):
-            winCheck.screenBlit(winCheck)
+            winCheck.screenBlit()
         textSurface.text((160, 250),f'{userText}',"Black",60, rectpos = 'topleft')
-        textSurface.screenBlit(textSurface)
+        textSurface.screenBlit()
     pg.display.update()
     clock.tick(60)
